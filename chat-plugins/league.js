@@ -1,4 +1,4 @@
-﻿
+
 exports.commands = {
 	/*********************************************************
 	 * League commands
@@ -7,29 +7,50 @@ exports.commands = {
 	ayudaliga: 'leaguehelp',
 	leaguehelp: function (target, room, user) {
 		return this.sendReplyBox(
-			"<center><h3><b><u>Lista de Comandos para las Ligas</u></b></h3></center>" +
-			"<br /><b>Comandos Usuales</b><br />" +
-			"/medallas [user] - Muestra las medallas con las que cuenta un usuario.<br />" +
-			"/liga [name] - Comando para mostrar la informacion más general de una liga (miembros y sala).<br />" +
-			"/darmedalla [user] - Entrega una medalla como miembro de una liga.<br />"  +
-			"/quitarmedalla [user] - Retira una medalla como miembro de una liga.<br />" +
-			"<br /><b>Comandos Administrativos</b><br />" +
-			"/medallist - Muestra la lista de Ids de la base de datos de medallas.<br />" +
-			"/medaldata [id] - Muestra una de las medallas por su ID.<br />" +
-			"/addmedal [id], [name], [width], [height], [image] - Agrega una medalla al server.<br />" +
-			"/deletemedal [id] - Elimina una medalla.<br />" +
-			"/editmedal [id], [name/image/width/height], [data] - Modifica las propiedades de una medalla.<br />" +
-			"/leguelist - Muestra la lista de Ids de la base de datos de ligas.<br />"  +
-			"/addleague [id], [name], [room] - Comando para registrar una liga.<br />"  +
-			"/deleteleague [id] - Comando para eliminar una liga.<br />"  +
-			"/editleague [id], [name/room], [data] - Edita la informacion de la liga.<br />"  +
-			"/setgymleader [id-league], [user], [id-medal] - Establece un usuario como miembro de la liga.<br />"  +
-			"/setgymleader [id-league], [user], [id-medal] - Establece un usuario como elite de la liga.<br />"  +
-			"/removegymleader [id-league], [id-medal] - Elimina un puesto de una liga.<br />"  +
-			"/darmedalla [user], (id) - Entrega una medalla.<br />"  +
-			"/quitarmedalla [user], (id) - Retira una medalla.<br />"
+	        "<hr>" +	 
+			"<center><big><b>Sistema de Liga de Pokémon Hispano</b></big></center>" +
+			"<center><font color=green>Introducción al sistema de la liga del servidor</font></center>" +
+			"<br><li><strong>Información básica</strong>: <a href=\"https://www.agregarlinkdelforo.com\">Liga Pokémon Hispano</a><br />" +
+			"<li><strong>Inscripciones</strong>: No hay inscripciones abiertas en estos momentos." +
+			"<center><br><i>En caso de tener alguna duda contactar al staff de la liga:</i></br></center>" +
+			"<center><i>Para más información acerca de cómo funciona la liga, leer el listado de comandos</center></i>" +
+			"<hr>" +
+			"<center><big><b>Comandos Generales</b><big></center></br>" +
+			"<br><li><strong>/medallas</strong> <i>[usuario]</i> - Muestra las medallas con las que cuenta un usuario.<br />" +
+			"<li><strong>/liga</strong> - Comando para mostrar la informacion general de la liga.<br />" +
+			"<br><hr>" +
+			"<center><big><b>Comandos Administrativos</b></big></center></br>" +
+			"<center><font color=green>Requieren ser líder/elite de la liga</font></center></br>" +
+			"<br><li><strong>/darmedalla</strong> <i>[usuario]</i> - Entrega una medalla como miembro de una liga.<br />"  +
+			"<li><strong>/quitarmedalla</strong> <i>[usuario]</i> - Retira una medalla como miembro de una liga.<br />" +
+			"<br /><hr>"
 		);
 	},
+	
+		ligaadmin: function () {
+        if (!this.canBroadcast()) return;
+        this.sendReplyBox(
+		    "<hr>" +
+            "<center><big><b>Comandos de Administración</b></big></center>" +
+			"<center><font color=green>Información de los comandos para el manejo de la liga</font></center>" +
+			"<hr>" +
+			"<br><li><strong>/medallist</strong> - <i>Muestra la lista de Ids de la base de datos de medallas.</i><br />" +
+			"<li><strong>/medaldata</strong> <i>[usuario, monto]</i> - Muestra una de las medallas por su ID.<br />" +
+			"<li><strong>/addmedal</strong> <i>[usuario]</i> - Agrega una medalla al server..<br />" +
+			"<li><strong>/deletemedal</strong> - Elimina una medalla.<br />" +
+			"<li><strong>/editmedal</strong> <i>[id], [name/image/width/height], [data]</i> - Modifica las propiedades de una medalla." +
+		    "<li><strong>/leaguelist</strong> - Muestra la lista de Ids de la base de datos de ligas.<br />" +
+		    "<li><strong>/addleague</strong> <i>[id], [name], [room]</i> - Comando para registrar una liga.<br />"  +
+			"<li><strong>/deleteleague</strong> - Comando para eliminar una liga." +
+			"<li><strong>/editleague</strong> <i>[id], [name/room], [data]</i> - Edita la información de la liga.<br />" +
+			"<li><strong>/setgymleader</strong> <i>[id-league], [user], [id-medal]</i> - Establece un usuario como lider de la liga.<br />" +
+			"<li><strong>/setgymleader</strong> <i>[id-league], [user], [id-medal]</i> - Establece un usuario como elite de la liga.<br />" +
+			"<li><strong>/removegymleader</strong> <i>[id-league], [id-medal]</i> - Elimina un puesto de una liga.<br />" +
+			"<li><strong>/darmedalla</strong> <i>[user, id]</i> - Entrega una medalla.<br />" +
+            "<li><strong>/quitarmedalla</strong> <i>[user, id]</i> - Retira una medalla.<br />" +
+            "<br><hr>"
+		);
+    },
 	
 	medallist: function (target, room, user) {
 		if (!this.can("league")) return false;
@@ -85,7 +106,7 @@ exports.commands = {
 		} else {
 			userT = targetUser;
 		}
-		var html = '<center><h2>Medallas de ' + userT + '</h2><center>';
+		var html = '<hr><center><b><big>Medallas de ' + userT + '</big></b></center><hr>';
 		html += League.getMedalRaw(userT);
 		return this.sendReplyBox(html);
 	},
@@ -138,14 +159,14 @@ exports.commands = {
 		if (!target) return this.sendReply("No has especificado ninguna liga.");
 		var params = target.split(',');
 		if (!params || params.length < 3) return this.sendReply("Usage: /addleague [id], [name], [room]");
-		if (League.newLeague(params[0], params[1], params[2])) return this.sendReply("Liga: " + toId(params[0]) + " creada con exito.");
+		if (League.newLeague(params[0], params[1], params[2])) return this.sendReply("La liga " + toId(params[0]) + " ha sido creada con exito.");
 		this.sendReply("La liga especificada ya existía.");
 	},
 	
 	deleteleague: function (target, room, user) {
 		if (!this.can("league")) return false;
 		if (!target) return this.sendReply("No has especificado ninguna liga.");
-		if (League.deleteLeague(target)) return this.sendReply("Liga: " + toId(target) + " eliminada con exito.");
+		if (League.deleteLeague(target)) return this.sendReply("La liga " + toId(target) + " ha sido eliminada con exito.");
 		this.sendReply("La liga especificada no existe.");
 	},
 	
@@ -166,7 +187,7 @@ exports.commands = {
 		var params = target.split(',');
 		if (!params || params.length < 3) return this.sendReply("Usage: /setgymleader [id-league], [user], [id-medal]");
 		if (!Users.get(params[1])) this.sendReply('Warning: ' + toId(params[1]) + ' is offline.');
-		if (League.addLeader(params[0], params[1], 'g', params[2])) return this.sendReply('Usuario ' + toId(params[1]) + ' asignado en el puesto correspondiente.');
+		if (League.addLeader(params[0], params[1], 'g', params[2])) return this.sendReply('El usuario ' + toId(params[1]) + ' ha sido asignado en el puesto correspondiente.');
 		this.sendReply("Alguno de los datos no es correcto.");
 	},
 	
@@ -176,7 +197,7 @@ exports.commands = {
 		var params = target.split(',');
 		if (!params || params.length < 3) return this.sendReply("Usage: /setelite [id-league], [user], [id-medal]");
 		if (!Users.get(params[1])) this.sendReply('Warning: ' + toId(params[1]) + ' is offline.');
-		if (League.addLeader(params[0], params[1], 'e', params[2])) return this.sendReply('Usuario ' + toId(params[1]) + ' asignado en el puesto correspondiente.');
+		if (League.addLeader(params[0], params[1], 'e', params[2])) return this.sendReply('El uuario ' + toId(params[1]) + ' ha sido asignado en el puesto correspondiente.');
 		this.sendReply("Alguno de los datos no es correcto.");
 	},
 	
@@ -203,7 +224,7 @@ exports.commands = {
 			if (!medalId) return this.sendReply('No estas registrado como miembro de la liga ' + league);
 			var medalData = League.getMedalData(medalId);
 			if (!League.giveMedal(medalId, params[0])) return this.sendReply('El usuario ya poseía la medalla que intentas entregar.');
-			userT.popup(user.name + " te ha entregado la siguiente medalla: " + medalData.name + "\nRecuerda que puedes comproar tus medallas con el comando /medallas");
+			userT.popup(user.name + " te ha entregado la siguiente medalla: " + medalData.name + "\nRecuerda que puedes comprobar tus medallas con el comando /medallas");
 			this.addModCommand(user.name + " ha entregado su medalla (" + medalData.name + ") a " + toId(target) + '.');
 			return;
 		} else if(params.length > 1){
