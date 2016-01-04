@@ -131,7 +131,7 @@ function create_table() {
 		}
 	}
 
-	return "<div class='infobox'><center><b><u>List of Emoticons</u></b></center>" + "<div class='infobox-limited'><table border='1' cellspacing='0' cellpadding='5' width='100%'>" + "<tbody>" + emotes_group_list.join("") + "</tbody>" + "</table></div></div>";
+	return "<div class='infobox'><center><b><u>Lista de emoticones</u></b></center>" + "<div class='infobox-limited'><table border='1' cellspacing='0' cellpadding='5' width='100%'>" + "<tbody>" + emotes_group_list.join("") + "</tbody>" + "</table></div></div>";
 }
 
 let emotes_table = create_table();
@@ -141,21 +141,21 @@ exports.commands = {
 	blockemotes: 'blockemoticons',
 	blockemoticon: 'blockemoticons',
 	blockemoticons: function (target, room, user) {
-		if (user.blockEmoticons === (target || true)) return this.sendReply("You are already blocking emoticons in private messages! To unblock, use /unblockemoticons");
+		if (user.blockEmoticons === (target || true)) return this.sendReply("Tu actualmente estas bloqueando los emoticones en tus mensajes privados! Para quitarlos, utiliza /unblockemoticons");
 		user.blockEmoticons = true;
-		return this.sendReply("You are now blocking emoticons in private messages.");
+		return this.sendReply("Tu ahora estas bloqueando los emoticones en los mensajes privados.");
 	},
-	blockemoticonshelp: ["/blockemoticons - Blocks emoticons in private messages. Unblock them with /unblockemoticons."],
+	blockemoticonshelp: ["/blockemoticons - Quitas los emoticones en los mensajes privados. Para quitarlos, usa /unblockemoticons."],
 
 	unblockemote: 'unblockemoticons',
 	unblockemotes: 'unblockemoticons',
 	unblockemoticon: 'unblockemoticons',
 	unblockemoticons: function (target, room, user) {
-		if (!user.blockEmoticons) return this.sendReply("You are not blocking emoticons in private messages! To block, use /blockemoticons");
+		if (!user.blockEmoticons) return this.sendReply("Tu ya no estas bloqueando los emoticones en tus mensajes privados! Para hacerlo, utiliza /blockemoticons");
 		user.blockEmoticons = false;
-		return this.sendReply("You are no longer blocking emoticons in private messages.");
+		return this.sendReply("Tu ya no estas bloqueando emoticones en los mensajes privados.");
 	},
-	unblockemoticonshelp: ["/unblockemoticons - Unblocks emoticons in private messages. Block them with /blockemoticons."],
+	unblockemoticonshelp: ["/unblockemoticons - Quitas el bloqueo de emoticones en los mensajes privados. Para bloquearlos, usa /blockemoticons."],
 
 	emotes: 'emoticons',
 	emoticons: function (target, room, user) {
@@ -171,9 +171,9 @@ exports.commands = {
 		room.disableEmoticons = !room.disableEmoticons;
 		this.sendReply("Disallowing emoticons is set to " + room.disableEmoticons + " in this room.");
 		if (room.disableEmoticons) {
-			this.add("|raw|<div class=\"broadcast-red\"><b>Emoticons are disabled!</b><br />Emoticons will not work.</div>");
+			this.add("|raw|<div class=\"broadcast-red\"><b>Los emoticones han sido removidos!</b><br />Los emoticones ahora estan desactivados.</div>");
 		} else {
-			this.add("|raw|<div class=\"broadcast-blue\"><b>Emoticons are enabled!</b><br />Emoticons will work now.</div>");
+			this.add("|raw|<div class=\"broadcast-blue\"><b>Los emoticones han sido habilitados!</b><br />Los emoticones ahora estan disponibles.</div>");
 		}
 	},
 	toggleemoticonshelp: ["/toggleemoticons - Toggle emoticons on or off."],
