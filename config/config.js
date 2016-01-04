@@ -357,6 +357,10 @@ exports.grouplist = [
 		broadcast: true
 	},
 	{
+		symbol: '*',
+		id: "Usuario reconocido"
+	},
+	{
 		symbol: ' ',
 		ip: 's'
 	}
