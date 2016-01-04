@@ -52,13 +52,13 @@ exports.commands = {
 
 			if (!name || !image_url) return this.parse('/help customavatar');
 			if (['.jpg', '.png', '.gif'].indexOf(ext) < 0) {
-				return this.errorReply("Image url must have .jpg, .png, or .gif extension.");
+				return this.errorReply("La URL de la imagen debe ser .jpg, .png, o .gif.");
 			}
 
 			Config.customavatars[name] = name + ext;
 
 			download_image(image_url, name, ext);
-			this.sendReply(parts[0] + "'s avatar has been set.");
+			this.sendReply(parts[0] + "Se le ha agregado su avatar.");
 		},
 
 		delete: function (target, room, user) {
@@ -68,18 +68,18 @@ exports.commands = {
 			const image = Config.customavatars[userid];
 
 			if (!image) {
-				return this.errorReply("This user does not have a custom avatar");
+				return this.errorReply("Este usuario no posee ningún avatar.");
 			}
 
 			delete Config.customavatars[userid];
 
 			fs.unlink(AVATAR_PATH + image, function (err) {
 				if (err && err.code === 'ENOENT') {
-					this.errorReply("This user's avatar does not exist.");
+					this.errorReply("El avatar de este usuario no existe.");
 				} else if (err) {
 					console.error(err);
 				}
-				this.sendReply("This user's avatar has been successfully removed.");
+				this.sendReply("El avatar del usuario ha sido borrado con éxito.");
 			}.bind(this));
 		},
 
@@ -89,6 +89,6 @@ exports.commands = {
 		}
 	},
 	customavatarhelp: ["Commands for /customavatar are:",
-	"/customavatar set [username], [image link] - Set a user's avatar.",
-	"/customavatar delete [username] - Delete a user's avatar."]
+	"/customavatar set [nombre de usuario], [imagen] - Establece un avatar para el usuario.",
+	"/customavatar delete [nombre de usuario] - Borra el avatar del usuario."]
 };
