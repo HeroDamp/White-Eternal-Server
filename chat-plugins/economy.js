@@ -4,14 +4,12 @@ let fs = require('fs');
 let path = require('path');
 
 let shop = [
-	['Ticket', 'Buys a lottery ticket for a chance to win big money.', 5],
-	['Symbol', 'Buys a custom symbol to go infront of name and puts you at top of userlist. (Temporary until restart, certain symbols are blocked)', 5],
-	['Fix', 'Buys the ability to alter your current custom avatar or trainer card. (don\'t buy if you have neither)', 10],
-	['Avatar', 'Buys an custom avatar to be applied to your name (You supply. Images larger than 80x80 may not show correctly)', 20],
-	['League Room', 'Purchases a room at a reduced rate for use with a league.  A roster must be supplied with at least 10 members for this room.', 25],
-	['Trainer', 'Buys a trainer card which shows information through a command. (You supply, can be refused)', 40],
-	['Staff Help', 'Staff member will help set up roomintros and anything else needed in a room. Response may not be immediate.', 50],
-	['Room', 'Buys a chatroom for you to own. (within reason, can be refused)', 100]
+	['Ticket', 'Compras un ticket para jugar la lotería. (Tienes chance de ganar mucho dinero)', 5],
+	['Simbolo', 'Compras un simbolo personalizado junto a tu nombre. (Lo obtendrás de manera temporal)', 100],
+	['Avatar', 'Compras un avatar personalizado. (La imagen deberá ser de 80x80)', 200],
+	['Trainer Card', 'Compras una targeta de entrenador. (Contactar a un administrador para obtener este articulo)', 200],
+	['Cambio', 'Cambias tu Avatar o TC. (No comprar en caso de no disponer de ninguno de los dos)', 150],
+	['Sala', 'Compras una sala privada. (En caso de romper las reglas sera eliminada.)', 1000]
 ];
 
 let shopDisplay = getShopDisplay(shop);
@@ -28,8 +26,8 @@ let shopDisplay = getShopDisplay(shop);
  * @returns {String}
  */
 function currencyName(amount) {
-	let name = " buck";
-	return amount === 1 ? name : name + "s";
+	let name = " PD";
+	return amount === 1 ? name : name + "";
 }
 
 /**
@@ -40,9 +38,9 @@ function currencyName(amount) {
  */
 function isMoney(money) {
 	let numMoney = Number(money);
-	if (isNaN(money)) return "Must be a number.";
-	if (String(money).includes('.')) return "Cannot contain a decimal.";
-	if (numMoney < 1) return "Cannot be less than one buck.";
+	if (isNaN(money)) return "Debe ser un número.";
+	if (String(money).includes('.')) return "No puede contener un decimal.";
+	if (numMoney < 1) return "No puede ser menos de 1 PokeDolar.";
 	return numMoney;
 }
 
@@ -66,18 +64,18 @@ function logMoney(message) {
  * @return {String} display
  */
 function getShopDisplay(shop) {
-	let display = "<table border='1' cellspacing='0' cellpadding='5' width='100%'>" +
-					"<tbody><tr><th>Command</th><th>Description</th><th>Cost</th></tr>";
+	let display = "<hr><center><font size=4><b><u>Tienda de Pokémon Hispano</u></b></size></center><hr><br><table border='1' cellspacing='0' cellpadding='5' width='100%'>" +
+					"<tbody><tr><th>Artículo</th><th>Descripción</th><th>Precio</th></tr>";
 	let start = 0;
 	while (start < shop.length) {
 		display += "<tr>" +
 						"<td align='center'><button name='send' value='/buy " + shop[start][0] + "'><b>" + shop[start][0] + "</b></button>" + "</td>" +
 						"<td align='center'>" + shop[start][1] + "</td>" +
-						"<td align='center'>" + shop[start][2] + "</td>" +
+						"<td align='center'><font color=green><b>" + shop[start][2] + "</b></font></td>" +
 					"</tr>";
 		start++;
 	}
-	display += "</tbody></table><center>To buy an item from the shop, use /buy <em>command</em>.</center>";
+	display += "</tbody></table><br><center>Para comprar un articulo de la tienda, usa el comando <b>/buy [Nombre]</b>.</center><center>También puedes comprar los articulos directamente haciendo click en los botones.</center><center>Para mayor información, utiliza <b>/ayudatienda</b>.</center>";
 	return display;
 }
 
@@ -98,12 +96,12 @@ function findItem(item, money) {
 		price = shop[len][2];
 		if (price > money) {
 			amount = price - money;
-			this.errorReply("You don't have you enough money for this. You need " + amount + currencyName(amount) + " more to buy " + item + ".");
+			this.errorReply("No dispones de suficiente dinero como para comprar este articulo. Necesitas " + amount + currencyName(amount) + " más para comprar " + item + ".");
 			return false;
 		}
 		return price;
 	}
-	this.errorReply(item + " not found in shop.");
+	this.errorReply(item + " no se encuentra en la tienda.");
 }
 
 /**
@@ -114,11 +112,11 @@ function findItem(item, money) {
  * @param {Number} cost - for lottery
  */
 function handleBoughtItem(item, user, cost) {
-	if (item === 'symbol') {
+	if (item === 'simbolo') {
 		user.canCustomSymbol = true;
-		this.sendReply("You have purchased a custom symbol. You can use /customsymbol to get your custom symbol.");
-		this.sendReply("You will have this until you log off for more than an hour.");
-		this.sendReply("If you do not want your custom symbol anymore, you may use /resetsymbol to go back to your old symbol.");
+		this.sendReply("Has comprado un Simbolo personalizado. Puedes usar /customsymbol para obtenerlo.");
+		this.sendReply("Se tiene hasta que cierres la sesión por más de una hora.");
+		this.sendReply("Si ya no quieres tu simbolo personalizado, usa el comando /resetsymbol para volver a tu simbolo anterior.");
 	} else if (item === 'ticket') {
 		let _this = this;
 		Database.get('pot', function (err, pot) {
@@ -133,19 +131,19 @@ function handleBoughtItem(item, user, cost) {
 					tickets.push(ticket);
 					Database.write('tickets', tickets, user.userid, function (err) {
 						if (err) throw err;
-						_this.sendReply("Your ticket has this id: " + ticket + ". The jackpot is currently worth " + pot + currencyName(pot) + ". Use /tickets to view your ticket(s).");
+						_this.sendReply("Tu ticket tiene este ID: " + ticket + ". El premio gordo vale actualmente " + pot + currencyName(pot) + ". Utiliza /tickets para ver tus tickets.");
 					});
 				});
 			});
 		});
 	} else {
-		let msg = '**' + user.name + " has bought " + item + ".**";
-		Rooms.rooms.staff.add('|c|~Shop Alert|' + msg);
+		let msg = '**' + user.name + " ha comprado el articulo " + item + ".**";
+		Rooms.rooms.staff.add('|c|~Tienda PH|' + msg);
 		Rooms.rooms.staff.update();
 		for (let user of Users.users) {
 			user = user[1];
 			if (user.group === '~' || user.group === '&') {
-				user.send('|pm|~Shop Alert|' + user.getIdentity() + '|' + msg);
+				user.send('|pm|~Tienda PH|' + user.getIdentity() + '|' + msg);
 			}
 		}
 	}
@@ -161,22 +159,21 @@ function rng() {
 }
 
 exports.commands = {
-	atm: 'wallet',
-	purse: 'wallet',
-	wallet: function (target, room, user) {
+	pd: 'pd',
+	pd: function (target, room, user) {
 		if (!this.canBroadcast()) return;
 		if (!target) target = user.name;
 
 		Database.read('money', toId(target), function (err, amount) {
 			if (err) throw err;
 			if (!amount) amount = 0;
-			this.sendReplyBox(Tools.escapeHTML(target) + " has " + amount + currencyName(amount) + ".");
+			this.sendReplyBox(" Ahorros de <b>" + user.name + "</b>: " + amount + currencyName(amount) + ".");
 			room.update();
 		}.bind(this));
 	},
-	wallethelp: ["/wallet [user] - Shows the amount of money a user has."],
+	wallethelp: ["/pd [user] - Shows the amount of money a user has."],
 
-	givebuck: 'givemoney',
+	dardinero: 'givemoney',
 	givebucks: 'givemoney',
 	givemoney: function (target, room, user) {
 		if (!this.can('forcewin')) return false;
@@ -196,15 +193,15 @@ exports.commands = {
 				if (err) throw err;
 				amount = amount + currencyName(amount);
 				total = total + currencyName(total);
-				_this.sendReply(username + " was given " + amount + ". " + username + " now has " + total + ".");
-				if (Users.get(username)) Users.get(username).popup(user.name + " has given you " + amount + ". You now have " + total + ".");
-				logMoney(username + " was given " + amount + " by " + user.name + ".");
+				_this.sendReply(" A " + username + " se le dio " + amount + ". ahora tiene " + total + ".");
+				if (Users.get(username)) Users.get(username).popup(user.name + " te ha dado " + amount + ". Ahora tienes " + total + ".");
+				logMoney(username + " se le dio un monto de " + amount + " por " + user.name + ".");
 			});
 		});
 	},
 	givemoneyhelp: ["/givemoney [user], [amount] - Give a user a certain amount of money."],
 
-	takebuck: 'takemoney',
+	quitardinero: 'takemoney',
 	takebucks: 'takemoney',
 	takemoney: function (target, room, user) {
 		if (!this.can('forcewin')) return false;
@@ -224,27 +221,27 @@ exports.commands = {
 				if (err) throw err;
 				amount = amount + currencyName(amount);
 				total = total + currencyName(total);
-				_this.sendReply(username + " losted " + amount + ". " + username + " now has " + total + ".");
-				if (Users.get(username)) Users.get(username).popup(user.name + " has taken " + amount + " from you. You now have " + total + ".");
-				logMoney(username + " had " + amount + " taken away by " + user.name + ".");
+				_this.sendReply(username + " perdió " + amount + ". Ahora tiene un total de " + total + ".");
+				if (Users.get(username)) Users.get(username).popup(user.name + " te ha quitado " + amount + " PokeDolares de tu cuenta. Ahora tienes " + total + ".");
+				logMoney(username + " tenía " + amount + " quitados por " + user.name + ".");
 			});
 		});
 	},
 	takemoneyhelp: ["/takemoney [user], [amount] - Take a certain amount of money from a user."],
 
-	resetbuck: 'resetmoney',
-	resetbucks: 'resetmoney',
+	resetpd: 'resetmoney',
+	resetdinero: 'resetmoney',
 	resetmoney: function (target, room, user) {
 		if (!this.can('forcewin')) return false;
 		Database.write('money', 0, toId(target), function (err, total) {
 			if (err) throw err;
-			this.sendReply(target + " now has " + total + currencyName(total) + ".");
-			logMoney(user.name + " reset the money of " + target + ".");
+			this.sendReply(target + " ahora tiene un total de " + total + currencyName(total) + ".");
+			logMoney(user.name + " ha reseteado el dinero de " + target + ".");
 		}.bind(this));
 	},
 	resetmoneyhelp: ["/resetmoney [user] - Reset user's money to zero."],
 
-	transfer: 'transfermoney',
+	donardinero: 'transfermoney',
 	transferbuck: 'transfermoney',
 	transferbucks: 'transfermoney',
 	transfermoney: function (target, room, user) {
@@ -254,15 +251,15 @@ exports.commands = {
 		let username = parts[0];
 		let amount = isMoney(parts[1]);
 
-		if (toId(username) === user.userid) return this.errorReply("You cannot transfer to yourself.");
-		if (username.length > 19) return this.errorReply("Username cannot be longer than 19 characters.");
+		if (toId(username) === user.userid) return this.errorReply("No te puedes donar dinero a ti mismo.");
+		if (username.length > 19) return this.errorReply("El nombre de usuario no puede tener mas de 19 carácteres.");
 		if (typeof amount === 'string') return this.errorReply(amount);
 
 		let _this = this;
 		Database.read('money', user.userid, function (err, userTotal) {
 			if (err) throw err;
 			if (!userTotal) userTotal = 0;
-			if (amount > userTotal) return _this.errorReply("You cannot transfer more money than what you have.");
+			if (amount > userTotal) return _this.errorReply("No puedes donar más dinero del que ya tienes..");
 			Database.read('money', toId(username), function (err, targetTotal) {
 				if (err) throw err;
 				if (!targetTotal) targetTotal = 0;
@@ -271,9 +268,9 @@ exports.commands = {
 						amount = amount + currencyName(amount);
 						userTotal = userTotal + currencyName(userTotal);
 						targetTotal = targetTotal + currencyName(targetTotal);
-						_this.sendReply("You have successfully transferred " + amount + ". You now have " + userTotal + ".");
-						if (Users.get(username)) Users.get(username).popup(user.name + " has transferred " + amount + ". You now have " + targetTotal + ".");
-						logMoney(user.name + " transferred " + amount + " to " + username + ". " + user.name + " now has " + userTotal + " and " + username + " now has " + targetTotal + ".");
+						_this.sendReply("Has donado exitosamente " + amount + ". Ahora tienes " + userTotal + ".");
+						if (Users.get(username)) Users.get(username).popup(user.name + " has donado " + amount + ". Ahora tienes " + targetTotal + ".");
+						logMoney(user.name + " donó un monto de " + amount + " a " + username + ". " + user.name + " ahora tiene " + userTotal + " y " + username + " tiene " + targetTotal + ".");
 					});
 				});
 			});
@@ -281,13 +278,14 @@ exports.commands = {
 	},
 	transfermoneyhelp: ["/transfer [user], [amount] - Transfer a certain amount of money to a user."],
 
-	store: 'shop',
+	tienda: 'shop',
 	shop: function (target, room, user) {
 		if (!this.canBroadcast()) return;
 		return this.sendReply("|raw|" + shopDisplay);
 	},
 	shophelp: ["/shop - Display items you can buy with money."],
 
+	comprar: 'buy',
 	buy: function (target, room, user) {
 		if (!target) return this.parse('/help buy');
 		let _this = this;
@@ -298,9 +296,8 @@ exports.commands = {
 			if (!cost) return room.update();
 			Database.write('money', amount - cost, user.userid, function (err, total) {
 				if (err) throw err;
-				_this.sendReply("You have bought " + target + " for " + cost +  currencyName(cost) + ". You now have " + total + currencyName(total) + " left.");
-				room.addRaw(user.name + " has bought <b>" + target + "</b> from the shop.");
-				logMoney(user.name + " has bought " + target + " from the shop. This user now has " + total + currencyName(total) + ".");
+				_this.sendReply("Has comprado el articulo " + target + " por " + cost +  currencyName(cost) + ". Ahora tienes " + total + currencyName(total) + ".");
+				logMoney(user.name + " ha comprado " + target + " de la tienda. Este usuario ahora tiene " + total + currencyName(total) + ".");
 				handleBoughtItem.call(_this, target.toLowerCase(), user, cost);
 				room.update();
 			});
@@ -309,10 +306,10 @@ exports.commands = {
 	buyhelp: ["/buy [command] - Buys an item from the shop."],
 
 	customsymbol: function (target, room, user) {
-		if (!user.canCustomSymbol && user.id !== user.userid) return this.errorReply("You need to buy this item from the shop.");
+		if (!user.canCustomSymbol && user.id !== user.userid) return this.errorReply("Necesitas comprar este articulo en la tienda.");
 		if (!target || target.length > 1) return this.parse('/help customsymbol');
 		if (target.match(/[A-Za-z\d]+/g) || '|?!+$%@\u2605=&~#\u03c4\u00a3\u03dd\u03b2\u039e\u03a9\u0398\u03a3\u00a9'.indexOf(target) >= 0) {
-			return this.errorReply("Sorry, but you cannot change your symbol to this for safety/stability reasons.");
+			return this.errorReply("Lo sentimos, pero no puedes cambiar tu simbolo a esto por razones de seguridad.");
 		}
 		user.customSymbol = target;
 		user.updateIdentity();
@@ -323,11 +320,11 @@ exports.commands = {
 
 	resetcustomsymbol: 'resetsymbol',
 	resetsymbol: function (target, room, user) {
-		if (!user.hasCustomSymbol) return this.errorReply("You don't have a custom symbol.");
+		if (!user.hasCustomSymbol) return this.errorReply("Tu no tienes un simbolo personalizado.");
 		user.customSymbol = null;
 		user.updateIdentity();
 		user.hasCustomSymbol = false;
-		this.sendReply("Your symbol has been reset.");
+		this.sendReply("Tu simbolo ha sido reseteado.");
 	},
 	resetsymbolhelp: ["/resetsymbol - Resets your custom symbol."],
 
@@ -339,10 +336,10 @@ exports.commands = {
 			numLines = Number(target);
 			matching = false;
 		}
-		let topMsg = "Displaying the last " + numLines + " lines of transactions:\n";
+		let topMsg = "Mostrando los últimos " + numLines + " registros de transacciones:\n";
 		let file = path.join(__dirname, '../logs/money.txt');
 		fs.exists(file, function (exists) {
-			if (!exists) return connection.popup("No transactions.");
+			if (!exists) return connection.popup("No hay transacciones.");
 			fs.readFile(file, 'utf8', function (err, data) {
 				data = data.split('\n');
 				if (target && matching) {
@@ -355,17 +352,17 @@ exports.commands = {
 		});
 	},
 
-	moneyladder: 'richestuser',
+	rankingpd: 'richestuser',
 	richladder: 'richestuser',
 	richestusers: 'richestuser',
 	richestuser: function (target, room, user) {
 		if (!this.canBroadcast()) return;
 		let _this = this;
-		let display = '<center><u><b>Richest Users</b></u></center><br><table border="1" cellspacing="0" cellpadding="5" width="100%"><tbody><tr><th>Rank</th><th>Username</th><th>Money</th></tr>';
+		let display = '<hr><center><u><b><big>Ranking PD</big></b></u></center><center><font color=green>Usuarios con las mayores cantidades de dinero</font></br></center><hr><br><table border="1" cellspacing="0" cellpadding="5" width="100%"><tbody><tr><th>Puesto</th><th>Nombre</th><th>Dinero</th></tr>';
 		Database.sortDesc('money', 10, function (err, users) {
 			if (err) throw err;
 			if (!users.length) {
-				_this.sendReplyBox("Money ladder is empty.");
+				_this.sendReplyBox("El ladder está vacío.");
 			} else {
 				users.forEach(function (user, index) {
 					display += "<tr><td>" + (index + 1) + "</td><td>" + user.username + "</td><td>" + user.money + "</td></tr>";
@@ -377,51 +374,51 @@ exports.commands = {
 		});
 	},
 
-	dicegame: 'startdice',
+	juegosdados: 'startdice',
 	dicestart: 'startdice',
 	startdice: function (target, room, user) {
 		if (!this.can('broadcast', null, room)) return false;
 		if (!target) return this.parse('/help startdice');
-		if (!this.canTalk()) return this.errorReply("You can not start dice games while unable to speak.");
+		if (!this.canTalk()) return this.errorReply("No puedes empezar un juego de Dados si no tienes permitido hablar.");
 
 		let amount = isMoney(target);
 
 		if (typeof amount === 'string') return this.errorReply(amount);
 		if (!room.dice) room.dice = {};
-		if (room.dice.started) return this.errorReply("A dice game has already started in this room.");
+		if (room.dice.started) return this.errorReply("Un juego de dados ya ha sido inicidado en esta sala.");
 
 		room.dice.started = true;
 		room.dice.bet = amount;
 		// Prevent ending a dice game too early.
 		room.dice.startTime = Date.now();
 
-		room.addRaw("<div class='infobox'><h2><center><font color=#24678d>" + user.name + " has started a dice game for </font><font color=red>" + amount + "</font><font color=#24678d>" + currencyName(amount) + ".</font><br><button name='send' value='/joindice'>Click to join.</button></center></h2></div>");
+		room.addRaw("<div class='infobox'><h2><center><font color=#24678d>" + user.name + " ha iniciado un juego de dados por </font><font color=red>" + amount + "</font><font color=#24678d>" + currencyName(amount) + ".</font><br><button name='send' value='/joindice'>Click para unirte.</button></center></h2></div>");
 	},
-	startdicehelp: ["/startdice [bet] - Start a dice game to gamble for money."],
+	startdicehelp: ["/startdice [bet] - Empieza un juego de dados para ganar dinero."],
 
 	joindice: function (target, room, user) {
-		if (!room.dice || (room.dice.p1 && room.dice.p2)) return this.errorReply("There is no dice game in it's signup phase in this room.");
-		if (!this.canTalk()) return this.errorReply("You may not join dice games while unable to speak.");
-		if (room.dice.p1 === user.userid) return this.errorReply("You already entered this dice game.");
+		if (!room.dice || (room.dice.p1 && room.dice.p2)) return this.errorReply("No hay un juego en su face de inicio en estos momentos en esta room.");
+		if (!this.canTalk()) return this.errorReply("No puedes unirte a juegos de dados si no tienes permitido hablar.");
+		if (room.dice.p1 === user.userid) return this.errorReply("Tu ya te has unido a este juego.");
 		let _this = this;
 		Database.read('money', user.userid, function (err, userMoney) {
 			if (err) throw err;
 			if (!userMoney) userMoney = 0;
-			if (userMoney < room.dice.bet) return _this.errorReply("You don't have enough bucks to join this game.");
+			if (userMoney < room.dice.bet) return _this.errorReply("No tienes suficiente dinero como para unirte al juego.");
 			Database.write('money', userMoney - room.dice.bet, user.userid, function (err) {
 				if (err) throw err;
 				if (!room.dice.p1) {
 					room.dice.p1 = user.userid;
-					room.addRaw("<b>" + user.name + " has joined the dice game.</b>");
+					room.addRaw("<b>" + user.name + " se ha unido al juego.</b>");
 					return room.update();
 				}
 				room.dice.p2 = user.userid;
-				room.addRaw("<b>" + user.name + " has joined the dice game.</b>");
+				room.addRaw("<b>" + user.name + " se ha unido al juego.</b>");
 				let p1Number = Math.floor(6 * Math.random()) + 1;
 				let p2Number = Math.floor(6 * Math.random()) + 1;
-				let output = "<div class='infobox'>Game has two players, starting now.<br>Rolling the dice.<br>" + room.dice.p1 + " has rolled a " + p1Number + ".<br>" + room.dice.p2 + " has rolled a " + p2Number + ".<br>";
+				let output = "<div class='infobox'>El juego tiene dos jugadores, iniciando.<br>Lanzando el dado.<br>" + room.dice.p1 + " ha lanzado un " + p1Number + ".<br>" + room.dice.p2 + " ha lanzado un " + p2Number + ".<br>";
 				while (p1Number === p2Number) {
-					output += "Tie... rolling again.<br>";
+					output += "Empate... rodando de nuevo.<br>";
 					p1Number = Math.floor(6 * Math.random()) + 1;
 					p2Number = Math.floor(6 * Math.random()) + 1;
 					output += room.dice.p1 + " has rolled a " + p1Number + ".<br>" + room.dice.p2 + " has rolled a " + p2Number + ".<br>";
@@ -429,7 +426,7 @@ exports.commands = {
 				let winner = room.dice[p1Number > p2Number ? 'p1' : 'p2'];
 				let loser = room.dice[p1Number < p2Number ? 'p1' : 'p2'];
 				let bet = room.dice.bet;
-				output += "<font color=#24678d><b>" + winner + "</b></font> has won <font color=#24678d><b>" + bet + "</b></font>" + currencyName(bet) + ".<br>Better luck next time " + loser + "!</div>";
+				output += "<font color=#24678d><b>" + winner + "</b></font> ha ganado <font color=#24678d><b>" + bet + "</b></font>" + currencyName(bet) + ".<br>Suerte para la próxima " + loser + "!</div>";
 				room.addRaw(output);
 				room.update();
 				delete room.dice;
@@ -446,9 +443,9 @@ exports.commands = {
 
 	enddice: function (target, room, user) {
 		if (!user.can('broadcast', null, room)) return false;
-		if (!room.dice) return this.errorReply("There is no dice game in this room.");
-		if ((Date.now() - room.dice.startTime) < 15000 && !user.can('broadcast', null, room)) return this.errorReply("Regular users may not end a dice game within the first minute of it starting.");
-		if (room.dice.p2) return this.errorReply("Dice game has already started.");
+		if (!room.dice) return this.errorReply("No ha iniciado un juego en esta sala.");
+		if ((Date.now() - room.dice.startTime) < 15000 && !user.can('broadcast', null, room)) return this.errorReply("Los usuarios regulados no pueden terminar un juego sin haber empezado 1 minuto.");
+		if (room.dice.p2) return this.errorReply("Ya ha empezado un juego.");
 		let dice = room.dice;
 		if (dice.p1) {
 			Database.read('money', dice.p1, function (err, total) {
@@ -460,7 +457,7 @@ exports.commands = {
 			});
 		}
 		delete room.dice;
-		room.addRaw("<b>" + user.name + " ended the dice game.</b>");
+		room.addRaw("<b>" + user.name + " ha terminado el juego.</b>");
 	},
 
 	ticket: 'tickets',
@@ -469,15 +466,15 @@ exports.commands = {
 		Database.read('tickets', user.userid, function (err, tickets) {
 			if (err) throw err;
 			if (!tickets || !tickets.length) {
-				this.sendReplyBox("You have no tickets.");
+				this.sendReplyBox("No tienes tickets.");
 			} else {
-				this.sendReplyBox("You have a total of " + tickets.length + " ticket(s). These are your ticket's ids: " + tickets.join(", ") + ".");
+				this.sendReplyBox("Tienes un total de " + tickets.length + " ticket(s). Registro de tus tickets (IDs): " + tickets.join(", ") + ".");
 			}
 			room.update();
 		}.bind(this));
 	},
 
-	picklottery: function (target, room, user) {
+	loteria: function (target, room, user) {
 		if (!this.can('picklottery')) return false;
 		let chance = Math.round(Math.random());
 		let _this = this;
@@ -487,7 +484,7 @@ exports.commands = {
 				return user.tickets && user.tickets.length > 0;
 			});
 			if (!chance) {
-				let msg = "<center><h2>Lottery!</h2>Nobody has won the lottery. Good luck to everyone next time!</center>";
+				let msg = "<center><h2>Lotería!</h2>Nadie ha ganado la lotería. Buena suerte a todos para la próxima!</center>";
 				_this.parse('/gdeclare ' + msg);
 				_this.parse('/pmall /html ' + msg);
 				room.update();
@@ -509,13 +506,13 @@ exports.commands = {
 			Database.get('pot', function (err, pot) {
 				if (err) throw err;
 				let winnings = Math.floor(pot * 3 / 4);
-				if (!winner) return _this.errorReply("No one has bought tickets.");
+				if (!winner) return _this.errorReply("Nadie ha comprado tickets.");
 				Database.read('money', winner.username, function (err, amount) {
 					if (err) throw err;
 					if (!amount) amount = 0;
 					Database.write('money', amount + winnings, winner.username, function (err, total) {
 						if (err) throw err;
-						let msg = "<center><h2>Lottery!</h2><h4><font color='red'><b>" + winner.username + "</b></font> has won the lottery with the ticket id of " + winner.ticket + "! This user has gained " + winnings + currencyName(winnings) + " and now has a total of " + total + currencyName(total) + ".</h4></center>";
+						let msg = "<center><h2>Lotería!</h2><h4><font color='red'><b>" + winner.username + "</b></font> Ha ganado la lotería con el ticket " + winner.ticket + "! Este usuario ha ganado " + winnings + currencyName(winnings) + " y ahora tiene un total de " + total + currencyName(total) + ".</h4></center>";
 						_this.parse('/gdeclare ' + msg);
 						_this.parse('/pmall /html ' + msg);
 						room.update();
@@ -533,25 +530,55 @@ exports.commands = {
 		});
 	},
 
-	jackpot: 'pot',
+	premio: 'pot',
 	pot: function (target, room, user) {
 		if (!this.canBroadcast()) return;
 		Database.get('pot', function (err, pot) {
 			if (err) throw err;
 			if (!pot) pot = 0;
-			this.sendReplyBox("The current jackpot is " + pot + currencyName(pot) + ".");
+			this.sendReplyBox("El premio gordo actual es de " + pot + currencyName(pot) + ".");
 		}.bind(this));
 	},
+	
+	ayudatienda: function () {
+        if (!this.canBroadcast()) return;
+        this.sendReplyBox(
+			"<hr>" +
+            "<center><big><b>Comandos Generales</b></big></center>" +
+			"<center><font color=green>Información de los comandos de tienda</font></center>" +
+			"<br><li><strong>/pd</strong> <i>[usuario]</i> - Consulta tus ahorros o los de alguien más.<br />" +
+			"<li><strong>/tienda</strong> - Revisa los artículos de la tienda.<br />" +
+			"<li><strong>/buy</strong> <i>[articulo]</i> - Compra un articulo de la tienda.<br />" +
+			"<li><strong>/donardinero</strong> <i>[usuario, dinero]</i> - Regalas PD a alguien.<br />" +
+			"<li><strong>/rankingpd</strong> - Muestra el top de los usuarios con más dinero en el servidor.<br />" +
+			"<br><hr>"
+        );
+    },
+	
+	tiendaadmin: function () {
+        if (!this.canBroadcast()) return;
+        this.sendReplyBox(
+		    "<hr>" +
+            "<center><big><b>Comandos de Administración</b></big></center>" +
+			"<center><font color=green>Información de los comandos para el manejo del dinero</font></center>" +
+			"<hr>" +
+			"<br><li><strong>/dardinero</strong> <i>[usuario, monto]</i> - Das dinero a un usuario.<br />" +
+			"<li><strong>/quitardinero</strong> <i>[usuario, monto]</i> - Quitas dinero a un usuario.<br />" +
+			"<li><strong>/resetpd</strong> <i>[usuario]</i> - Reseteas los ahorros de un usuario a 0.<br />" +
+			"<li><strong>/moneylog</strong> - Muestra los registros de las transacciones.<br />" +
+            "<br><hr>"
+		);
+    },
 
-	bucks: 'economystats',
+	estadoeco: 'economystats',
 	economystats: function (target, room, user) {
 		if (!this.canBroadcast()) return;
 		let _this = this;
 		Database.total('money', function (err, total) {
 			Database.countUsers(function (err, numUsers) {
 				let average = Math.floor(total / numUsers);
-				let output = "There is " + total + currencyName(total) + " circulating in the economy. ";
-				output += "The average user has " + average + currencyName(average) + ".";
+				let output = "<center><font color=green><u><h2><font size=4>Estado economico del servidor</size></h2></u></font></center><li>Hay un total de <b>" + total + currencyName(total) + "</b> circulando en la economía del servidor.</li> ";
+				output += "<li>El usuario que posee el monto de dinero más alto es de un total de <b>" + average + currencyName(average) + "</li></b><br><center>Utiliza <em><font color=red>/ladderdinero</em></font> para ver el ranking.</center></br>";
 				_this.sendReplyBox(output);
 			});
 			room.update();
