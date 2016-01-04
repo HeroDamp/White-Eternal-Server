@@ -85,8 +85,8 @@ function label(text) {
 }
 
 function currencyName(amount) {
-	let name = " buck";
-	return amount === 1 ? name : name + "s";
+	let name = " PD";
+	return amount === 1 ? name : name + "";
 }
 
 Profile.prototype.avatar = function () {
@@ -109,28 +109,28 @@ Profile.prototype.buttonAvatar = function () {
 };
 
 Profile.prototype.group = function () {
-	if (this.isOnline && this.user.group === ' ') return label('Group') + 'Regular User';
-	if (this.isOnline) return label('Group') + Config.groups[this.user.group].name;
+	if (this.isOnline && this.user.group === ' ') return label('Grupo') + 'Usuario regular';
+	if (this.isOnline) return label('Grupo') + Config.groups[this.user.group].name;
 	for (let name in Users.usergroups) {
 		if (toId(this.username) === name) {
-			return label('Group') + Config.groups[Users.usergroups[name].charAt(0)].name;
+			return label('Grupo') + Config.groups[Users.usergroups[name].charAt(0)].name;
 		}
 	}
-	return label('Group') + 'Regular User';
+	return label('Grupo') + 'Usuario regular';
 };
 
 Profile.prototype.money = function (amount) {
-	return label('Money') + amount + currencyName(amount);
+	return label('Dinero') + amount + currencyName(amount);
 };
 
 Profile.prototype.name = function () {
-	return label('Name') + bold(font(color(toId(this.username)), this.username));
+	return label('Nombre') + bold(font(color(toId(this.username)), this.username));
 };
 
 Profile.prototype.seen = function (timeAgo) {
-	if (this.isOnline) return label('Last Seen') + font('#2ECC40', 'Currently Online');
-	if (!timeAgo) return label('Last Seen') + 'Never';
-	return label('Last Seen') + moment(timeAgo).fromNow();
+	if (this.isOnline) return label('Online') + font('#2ECC40', 'Conectado');
+	if (!timeAgo) return label('Online') + 'Desconectado';
+	return label('Online') + moment(timeAgo).fromNow();
 };
 
 Profile.prototype.show = function (callback) {
@@ -151,7 +151,7 @@ Profile.prototype.show = function (callback) {
 exports.commands = {
 	profile: function (target, room, user) {
 		if (!this.canBroadcast()) return;
-		if (target.length >= 19) return this.sendReply("Usernames are required to be less than 19 characters long.");
+		if (target.length >= 19) return this.sendReply("Los nombres de usuarios deben tener menos de 19 carácteres.");
 		let targetUser = this.targetUserOrSelf(target);
 		let profile;
 		if (!targetUser) {
