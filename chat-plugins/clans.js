@@ -722,7 +722,7 @@ exports.commands = {
 		if (!Clans.removeMember(clanUser, user.name)) {
 			 this.sendReply("Error al intentar salir del clan.");
 		} else {
-			this.sendReply("Has salido del clan" + clanUser);
+			this.sendReply("Has salido del clan " + clanUser);
 		}
 	},
 
