@@ -64,7 +64,7 @@ function logMoney(message) {
  * @return {String} display
  */
 function getShopDisplay(shop) {
-	let display = "<hr><center><font size=4><b><u>Tienda de Pokémon Hispano</u></b></size></center><hr><br><table border='1' cellspacing='0' cellpadding='5' width='100%'>" +
+	let display = "<hr><center><font size=4><b><u>Bienvenidos A La Tienda Del Servidor</u></b></size></center><hr><br><table border='1' cellspacing='0' cellpadding='5' width='100%'>" +
 					"<tbody><tr><th>Artículo</th><th>Descripción</th><th>Precio</th></tr>";
 	let start = 0;
 	while (start < shop.length) {
