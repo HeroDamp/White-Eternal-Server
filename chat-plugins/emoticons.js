@@ -47,7 +47,10 @@ let emotes = {
 	':raichu:': 'http://cbc.pokecommunity.com/config/emoticons/raichu.png',
 	':wynaut:': 'http://cbc.pokecommunity.com/config/emoticons/wynaut.png',
 	'moo': 'http://cbc.pokecommunity.com/config/emoticons/moo.gif',
-	':naruto:': 'http://lh4.ggpht.com/_QwvI2Zom950/TAdYX8-5gQI/AAAAAAAAAu0/2ng4u2V9-1Y/s128/naruto.gif'
+	':naruto:': 'http://lh4.ggpht.com/_QwvI2Zom950/TAdYX8-5gQI/AAAAAAAAAu0/2ng4u2V9-1Y/s128/naruto.gif',
+	':fasepalm:': 'http://i.imgur.com/ylrqFwJ.png',
+	':facepalm:': 'http://i.imgur.com/lv3GmpM.png'
+
 };
 
 let emotesKeys = Object.keys(emotes);
